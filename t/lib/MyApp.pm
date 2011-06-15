@@ -1,24 +1,18 @@
 package MyApp;
 use Catalyst;
-use Catalyst::Action;
-
-BEGIN {
-  $ENV{CATALYST_SCRIPT_GEN} = 40;
-}
-
+use Catalyst::Lite::Action;
 use Catalyst::Script::Server;
-use Data::Dump;
 
 MyApp->setup;
 
 my $d = MyApp->dispatcher;
 $d->register(
-  App => Catalyst::Action->new(
+  App => Catalyst::Lite::Action->new(
     name       => 'hello',
     reverse    => '/hello',
     namespace  => '',
     class      => 'MyApp',
-    code       => sub { $_[1]->res->body('hello world!') },
+    code       => sub { shift->res->body('hello world!') },
     attributes => { Path => ['/'] }
   )
 );
