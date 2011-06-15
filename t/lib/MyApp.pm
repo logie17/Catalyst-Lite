@@ -1,21 +1,18 @@
 package MyApp;
-use Catalyst;
-use Catalyst::Lite::Action;
-use Catalyst::Script::Server;
+use Catalyst::Lite;
+
+get '/' => sub { pop->res->body('hello world!') };
+get
+  Chained     => '/',
+  PathPart    => 'hello',
+  CaptureArgs => 0 => sub { pop->stash->{chained} = 'from chained' };
+
+get
+  Chained  => '/hello',
+  PathPart => '',
+  Args     => 0 => sub {
+    my ( $app, $c ) = @_;
+    $c->res->body( 'hello ' . $c->stash->{chained} );
+};
 
 MyApp->setup;
-
-my $d = MyApp->dispatcher;
-$d->register(
-  App => Catalyst::Lite::Action->new(
-    name       => 'hello',
-    reverse    => '/hello',
-    namespace  => '',
-    class      => 'MyApp',
-    code       => sub { shift->res->body('hello world!') },
-    attributes => { Path => ['/'] }
-  )
-);
-
-#Catalyst::Script::Server->new( application_name => 'MyApp' )
-#  ->run( MyApp => 'Server' );
